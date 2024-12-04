@@ -16,6 +16,7 @@ function App() {
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
+          <img src="logo.png"></img>
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             Where <GradientText gradient="primary">Boundless</GradientText> meets{' '}
             <GradientText gradient="secondary">Effortless</GradientText>
