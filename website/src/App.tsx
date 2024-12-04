@@ -5,6 +5,7 @@ import { CodeExample } from './components/CodeExample';
 import { Download, ArrowRight } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { GradientText } from './components/GradientText';
+import logo from './logo.png';
 
 function App() {
   const { theme, setTheme } = useTheme();
@@ -16,7 +17,7 @@ function App() {
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <img src="logo.png"></img>
+          <img src={logo}/>
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             Where <GradientText gradient="primary">Boundless</GradientText> meets{' '}
             <GradientText gradient="secondary">Effortless</GradientText>
