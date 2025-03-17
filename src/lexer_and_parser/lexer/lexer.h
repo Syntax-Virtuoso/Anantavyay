@@ -9,6 +9,7 @@ typedef enum {
     TOKEN_OPERATOR,
     TOKEN_STRING,
     TOKEN_COLON,
+    TOKEN_BOOLEAN,
     TOKEN_ASSIGNMENT,
     TOKEN_ARROW,
     TOKEN_EQ,

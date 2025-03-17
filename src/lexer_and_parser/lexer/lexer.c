@@ -10,7 +10,7 @@ static size_t position = 0;
 static size_t length = 0;
 
 // Keywords
-const char *keywords[] = { "sheep", "fn", "return", NULL };
+const char *keywords[] = { "sheep", "fn", "if", "elif", "else", "return", NULL };
 
 // Initialize lexer
 void init_lexer(const char *source) {
@@ -98,7 +98,29 @@ Token *get_next_token() {
             char *lexeme = strndup(&source_code[start], size);
             position++; // Skip the closing quote
 
-            return create_token(TOKEN_STRING, lexeme)
+            return create_token(TOKEN_STRING, lexeme);
+        }
+
+        // Handling Literal: Boolean (true/false)
+        if (current == 't' || current == 'f') {
+            size_t start = position;
+            while (position < length && is_identifier_char(source_code[position])) {
+                position++;
+            }
+            size_t size = position - start;
+            char *lexeme = strndup(&source_code[start], size);
+
+            if (strcmp(lexeme, "true") == 0){
+                return create_token(TOKEN_BOOLEAN, lexeme);
+            }
+            else if (strcmp(lexeme, "false") == 0) {
+                return create_token(TOKEN_BOOLEAN, lexeme);
+            }
+            else {
+                // Not "true" or "false", so we treat it as an identifier
+                position = start + 1;
+                free(lexeme);
+            }
         }
 
         // Multi-character tokens: Arrow (->)
@@ -129,6 +151,18 @@ Token *get_next_token() {
         if (current == '<' && position + 1 < length && source_code[position + 1] == '=') {
             position += 2;
             return create_token(TOKEN_EQ, "<=");
+        }
+
+        // Single-character tokens: Lesser than (<)
+        if (current == '<') {
+            position++;
+            return create_token(TOKEN_EQ, "<");
+        }
+
+        // Single-character tokens: Greater than (>)
+        if (current == '>') {
+            position++;
+            return create_token(TOKEN_EQ, ">");
         }
 
         // Operators and symbols
@@ -197,7 +231,12 @@ int main() {
     const char *source_code = 
         "square = sheep(x : x * x)\n"
         "fn greet(name: str, age: int = 25) -> str:\n"
-        "    return f\"Hello {name}, you are {age} years old.\"";
+        "   return f\"Hello {name}, you are {age} years old.\""
+        "fn canHeDrink(age: int) -> bool:"
+        "   if age < 19:"
+        "       return false"
+        "   else:"
+        "       return true";
 
     init_lexer(source_code);
 
