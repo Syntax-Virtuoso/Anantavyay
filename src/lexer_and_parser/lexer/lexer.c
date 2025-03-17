@@ -52,6 +52,15 @@ Token *get_next_token() {
             position++;
             continue;
         }
+        
+        // Skip comments (#)
+        if (current == '#') {
+            position++; // Skip the #
+            while (position < length && source_code[position] != '\n') {
+                position++; // Skip the whole comment (rest of the line)
+            }
+            continue; // Seventh stage of grief (moving on)
+        }
 
         // Identifier or keyword
         if (isalpha(current) || current == '_') {
@@ -66,7 +75,7 @@ Token *get_next_token() {
             return create_token(type, lexeme);
         }
 
-        // Number
+        // Handling Literal: Number
         if (isdigit(current)) {
             size_t start = position;
             while (position < length && isdigit(source_code[position])) {
@@ -78,10 +87,48 @@ Token *get_next_token() {
             return create_token(TOKEN_NUMBER, lexeme);
         }
 
-        // Multi-character tokens
+        // Handling Literal: String
+        if (current == '"') {
+            position++; // Skip the opening quote, begin analyzing the main string
+            size_t start = position;
+            while (position < length && source_code[position] != '"') {
+                position++;
+            }
+            size_t size = position - start;
+            char *lexeme = strndup(&source_code[start], size);
+            position++; // Skip the closing quote
+
+            return create_token(TOKEN_STRING, lexeme)
+        }
+
+        // Multi-character tokens: Arrow (->)
         if (current == '-' && position + 1 < length && source_code[position + 1] == '>') {
             position += 2;
             return create_token(TOKEN_ARROW, "->");
+        }
+
+        // Multi-character tokens: Double-equal-to (==)
+        if (current == '=' && position + 1 < length && source_code[position + 1] == '=') {
+            position += 2;
+            return create_token(TOKEN_EQ, "==");
+        }
+
+        // Multi-character tokens: Not-equal-to (!=)
+        if (current == '!' && position + 1 < length && source_code[position + 1] == '=') {
+            position += 2;
+            return create_token(TOKEN_EQ, "!=");
+        }
+
+        // Multi-character tokens: Greater-or-equal-to (>=)
+        if (current == '>' && position + 1 < length && source_code[position + 1] == '=') {
+            position += 2;
+            return create_token(TOKEN_EQ, ">=");
+        }
+
+        // Multi-character tokens: Lesser-or-equal-to (<=)
+        if (current == '<' && position + 1 < length && source_code[position + 1] == '=') {
+            position += 2;
+            return create_token(TOKEN_EQ, "<=");
         }
 
         // Operators and symbols
@@ -116,10 +163,6 @@ Token *get_next_token() {
         if (current == '}') {
             position++;
             return create_token(TOKEN_OPERATOR, "}");
-        }
-        if (current == '"') {
-            position++;
-            return create_token(TOKEN_OPERATOR, "\"");
         }
         if (current == '.') {
             position++;
